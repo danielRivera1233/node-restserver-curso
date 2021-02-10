@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion');
 
 const app = express();
 
@@ -11,7 +12,7 @@ const prueba = '/usuario';
 const pruebaPut = '/usuario/:id';
 const pruebaDelete = '/usuarioD/:id';
 
-app.post(prueba, function (req, res) {
+app.post(prueba, [verificaToken, verificaAdminRole], (req, res) => {
     console.log(`Ejecutando el servicio POST ${prueba}`);
     let body = req.body;
 
@@ -37,7 +38,8 @@ app.post(prueba, function (req, res) {
     });
 });
 
-app.get(prueba, function (req, res) {
+
+app.get(prueba, verificaToken, (req, res) => {
     console.log(`Ejecutando el servicio GET ${prueba}`);
 
     let filters = req.headers.filters;
@@ -72,7 +74,7 @@ app.get(prueba, function (req, res) {
 });
 
 
-app.put(pruebaPut, function (req, res) {
+app.put(pruebaPut, [verificaToken, verificaAdminRole], (req, res) => {
     console.log(`Ejecutando el servicio PUT -> ${prueba}`);
     let id = req.params.id;
     let body = _.pick( req.body, ['nombre', 'email', 'img', 'role', 'estado'] );
@@ -95,7 +97,7 @@ app.put(pruebaPut, function (req, res) {
 });
 
 
-app.delete(pruebaDelete, function (req, res) {
+app.delete(pruebaDelete, [verificaToken, verificaAdminRole], (req, res) => {
     console.log(`Ejecutando el servicio DELETE ${pruebaDelete}`);
 
     let id = req.params.id;
@@ -128,7 +130,7 @@ app.delete(pruebaDelete, function (req, res) {
 });
 
 
-app.delete(pruebaPut, function (req, res) {
+app.delete(pruebaPut, [verificaToken, verificaAdminRole], (req, res) => {
     console.log(`Ejecutando el servicio DELETE ${pruebaPut}`);
 
     let id = req.params.id;
